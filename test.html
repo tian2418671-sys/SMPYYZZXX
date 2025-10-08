@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPM扩展测试页面</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #1a1a1a;
+        color: white;
+      }
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .test-section {
+        background: #2a2a2a;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+      }
+      .error {
+        border-left-color: #f44336;
+      }
+      .warning {
+        border-left-color: #ff9800;
+      }
+      .btn {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      .btn:hover {
+        background: #45a049;
+      }
+      .log {
+        background: #0a0a0a;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🔧 SPM扩展测试诊断工具</h1>
+
+      <div class="test-section">
+        <h2>📋 基本信息</h2>
+        <p><strong>当前时间:</strong> <span id="current-time"></span></p>
+        <p><strong>浏览器:</strong> <span id="browser-info"></span></p>
+        <p><strong>页面URL:</strong> <span id="page-url"></span></p>
+      </div>
+
+      <div class="test-section">
+        <h2>🔍 扩展检测</h2>
+        <button class="btn" onclick="testExtensionFiles()">检测扩展文件</button>
+        <button class="btn" onclick="testExtensionLoad()">检测扩展加载</button>
+        <button class="btn" onclick="simulateLoad()">模拟加载扩展</button>
+        <div id="extension-status" class="log"></div>
+      </div>
+
+      <div class="test-section">
+        <h2>🧪 功能测试</h2>
+        <button class="btn" onclick="testUI()">测试UI创建</button>
+        <button class="btn" onclick="testCommands()">测试命令</button>
+        <button class="btn" onclick="clearTests()">清除测试</button>
+        <div id="function-status" class="log"></div>
+      </div>
+
+      <div class="test-section">
+        <h2>📝 诊断建议</h2>
+        <div id="diagnostic-advice"></div>
+      </div>
+    </div>
+
+    <script>
+      // 更新基本信息
+      document.getElementById('current-time').textContent = new Date().toLocaleString();
+      document.getElementById('browser-info').textContent = navigator.userAgent;
+      document.getElementById('page-url').textContent = window.location.href;
+
+      let testLog = '';
+
+      function log(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const icon = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
+        testLog += `[${timestamp}] ${icon} ${message}\n`;
+        updateLogs();
+      }
+
+      function updateLogs() {
+        document.getElementById('extension-status').textContent = testLog;
+        document.getElementById('function-status').textContent = testLog;
+      }
+
+      function clearTests() {
+        testLog = '';
+        updateLogs();
+        document.getElementById('diagnostic-advice').innerHTML = '';
+      }
+
+      async function testExtensionFiles() {
+        log('开始检测扩展文件...');
+
+        const files = [
+          'extensions/spm-status-monito/manifest.json',
+          'extensions/spm-status-monito/index.js',
+          'extensions/spm-status-monito/style.css',
+        ];
+
+        for (const file of files) {
+          try {
+            const response = await fetch(file);
+            if (response.ok) {
+              log(`文件存在: ${file}`);
+            } else {
+              log(`文件缺失: ${file} (状态: ${response.status})`, 'error');
+            }
+          } catch (error) {
+            log(`文件检测失败: ${file} - ${error.message}`, 'error');
+          }
+        }
+      }
+
+      function testExtensionLoad() {
+        log('检测扩展加载状态...');
+
+        if (typeof window.spmStatusMonitor !== 'undefined') {
+          log('✅ SPM扩展全局标记存在');
+        } else {
+          log('❌ SPM扩展全局标记不存在', 'error');
+        }
+
+        if (typeof window.spmDebug !== 'undefined') {
+          log('✅ SPM调试接口存在');
+          log(`版本: ${window.spmDebug.version}`);
+          log(`状态: ${window.spmDebug.isActive() ? '活跃' : '非活跃'}`);
+        } else {
+          log('❌ SPM调试接口不存在', 'error');
+        }
+
+        // 检查UI元素
+        const panel = document.getElementById('spm-status-panel');
+        if (panel) {
+          log('✅ SPM面板元素存在');
+        } else {
+          log('❌ SPM面板元素不存在', 'error');
+        }
+      }
+
+      function simulateLoad() {
+        log('尝试模拟加载扩展...');
+
+        // 模拟创建SPM扩展环境
+        if (!window.eventSource) {
+          window.eventSource = {
+            on: function (event, handler) {
+              log(`事件监听器注册: ${event}`);
+            },
+          };
+          window.event_types = {
+            MESSAGE_SENT: 'message_sent',
+            MESSAGE_RECEIVED: 'message_received',
+          };
+        }
+
+        if (!window.getContext) {
+          window.getContext = function () {
+            return {
+              extensionSettings: {},
+              saveSettingsDebounced: function () {
+                log('设置已保存');
+              },
+            };
+          };
+        }
+
+        if (!window.registerSlashCommand) {
+          window.registerSlashCommand = function (command, handler, args, help) {
+            log(`斜杠命令注册: /${command}`);
+          };
+        }
+
+        log('模拟环境创建完成');
+
+        // 创建简化的SPM面板
+        createTestPanel();
+      }
+
+      function createTestPanel() {
+        log('创建测试面板...');
+
+        // 移除现有面板
+        const existingPanel = document.getElementById('spm-status-panel');
+        if (existingPanel) {
+          existingPanel.remove();
+        }
+
+        // 创建新面板
+        const panel = document.createElement('div');
+        panel.id = 'spm-status-panel';
+        panel.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 300px;
+                background: rgba(0, 0, 0, 0.9);
+                border: 1px solid #444;
+                border-radius: 8px;
+                color: white;
+                font-family: Arial, sans-serif;
+                z-index: 10000;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            `;
+
+        panel.innerHTML = `
+                <div style="background: #333; padding: 10px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; font-size: 14px;">SPM Status Monitor v8.7.0</h3>
+                    <button id="spm-close" style="background: #666; border: none; color: white; padding: 2px 6px; border-radius: 3px; cursor: pointer;">×</button>
+                </div>
+                <div style="padding: 15px;">
+                    <div style="margin-bottom: 8px; font-size: 12px;">状态: <span style="color: #4CAF50; font-weight: bold;">测试模式</span></div>
+                    <div style="margin-bottom: 8px; font-size: 12px;">版本: 8.7.0</div>
+                    <div style="margin-bottom: 8px; font-size: 12px;">时间: ${new Date().toLocaleTimeString()}</div>
+                </div>
+            `;
+
+        document.body.appendChild(panel);
+
+        // 绑定关闭事件
+        document.getElementById('spm-close').addEventListener('click', () => {
+          panel.remove();
+          log('测试面板已关闭');
+        });
+
+        log('✅ 测试面板创建成功');
+      }
+
+      function testUI() {
+        log('测试UI功能...');
+        createTestPanel();
+      }
+
+      function testCommands() {
+        log('测试命令功能...');
+
+        // 模拟斜杠命令
+        const panel = document.getElementById('spm-status-panel');
+        if (panel) {
+          const isVisible = panel.style.display !== 'none';
+          panel.style.display = isVisible ? 'none' : 'block';
+          log(`面板显示状态切换: ${isVisible ? '隐藏' : '显示'}`);
+        } else {
+          log('面板不存在，无法执行命令', 'error');
+        }
+      }
+
+      // 自动诊断
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          log('页面加载完成，开始自动诊断...');
+
+          const advice = [];
+
+          if (window.location.protocol === 'file:') {
+            advice.push('⚠️ 检测到file://协议，某些功能可能无法正常工作。建议在HTTP服务器上运行。');
+          }
+
+          if (!window.fetch) {
+            advice.push('❌ 浏览器不支持fetch API，请升级浏览器。');
+          }
+
+          if (testLog.includes('文件缺失') || testLog.includes('检测失败')) {
+            advice.push('❌ 扩展文件加载失败，请检查文件路径和权限。');
+          }
+
+          if (!advice.length) {
+            advice.push('✅ 基本环境检查通过，可以尝试手动测试扩展功能。');
+          }
+
+          document.getElementById('diagnostic-advice').innerHTML = advice.map(item => `<p>${item}</p>`).join('');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

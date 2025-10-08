@@ -3,49 +3,26 @@
   "loading_order": 10,
   "requires": [],
   "optional": [],
-  "js": "index.js",
+  "js": "st-extension.js",
   "css": "style.css",
   "author": "tian2418671-sys",
   "version": "8.7.0",
   "homePage": "https://github.com/tian2418671-sys/SMPYYZZXX",
   "auto_update": false,
-  "description": "专为SillyTavern设计的高级角色状态监控扩展 - 实时监控角色共鸣度和互动状态，提供可视化数据分析面板，支持移动端和函数调用",
+  "description": "专为SillyTavern设计的高级角色状态监控扩展",
   "tags": [
     "monitoring",
     "character",
     "status",
-    "ui",
-    "dashboard",
-    "analytics",
-    "mobile",
-    "realtime",
-    "visualization"
+    "ui"
   ],
   "keywords": [
     "spm",
     "status",
     "monitor",
-    "character",
-    "analytics",
-    "dashboard",
-    "sillytavern"
+    "character"
   ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tian2418671-sys/SMPYYZZXX.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tian2418671-sys/SMPYYZZXX/issues"
-  },
-  "documentation": {
-    "install": "./安装指南.md",
-    "troubleshooting": "./故障排除指南.md",
-    "compliance": "./符合性分析报告.md"
-  },
-  "compatibility": {
-    "sillytavern": ">=1.12.0",
-    "browsers": ["chrome", "firefox", "safari", "edge"],
-    "mobile": true
-  }
+  "supports_ui_layout": true,
+  "supports_mobile": true,
+  "supports_function_calling": true
 }
