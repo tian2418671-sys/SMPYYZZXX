@@ -1,0 +1,33 @@
+{
+  "name": "spm-status-monitor-extension",
+  "version": "8.7.0",
+  "description": "SPM Status Monitor SillyTavern扩展 - 角色状态监控与数据分析",
+  "private": true,
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tian2418671-sys/SMPZTL.git"
+  },
+  "keywords": [
+    "sillytavern",
+    "spm",
+    "monitor",
+    "extension",
+    "mvu",
+    "status"
+  ],
+  "author": "tian2418671-sys",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --format=iife --minify --outfile=dist/bundle.js",
+    "dev": "esbuild src/main.js --bundle --format=iife --sourcemap --outfile=dist/bundle.js --watch",
+    "clean": "node -e \"const fs=require('fs'); if(fs.existsSync('dist')) fs.rmSync('dist', {recursive:true, force:true}); fs.mkdirSync('dist', {recursive:true});\"",
+    "prebuild": "npm run clean"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -1,0 +1,76 @@
+# SPM Status Monitor - Git忽略文件
+
+# 依赖目录
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 构建输出
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 覆盖率目录
+coverage/
+.nyc_output
+
+# IDE和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+logs
+*.log
+
+# 临时文件
+.tmp/
+.temp/
+
+# 缓存文件
+.cache/
+.parcel-cache/
+
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 备份文件
+*.bak
+*.backup
+*.old
+
+# 测试输出
+test-results/
+coverage/
+
+# 用户配置文件（可选）
+config.local.json
+settings.local.json
+
+# SillyTavern相关
+# 如果作为扩展安装，这些文件可能由SillyTavern生成
+*.st-cache
+*.st-temp
